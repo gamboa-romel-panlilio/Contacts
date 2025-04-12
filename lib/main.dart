@@ -148,3 +148,41 @@ class _HomepageState extends State<Homepage> {
            });
            }),
          ),
+     child: SafeArea(child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+                children: [
+           Row(
+             children: [
+               Text('Contacts', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),),
+             ],
+           ),
+                  SizedBox(height: 15,),
+                  CupertinoTextField(
+                    placeholder: 'Search',
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                    prefix: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(CupertinoIcons.search, color: CupertinoColors.systemGrey, size: 20,),
+                    ),
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(CupertinoIcons.mic_fill, color: CupertinoColors.systemGrey, size: 20,),
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(12,9,12,9),
+
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey,
+                              borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: Text('RG', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
+                      ),
+                      SizedBox(width: 10,),
