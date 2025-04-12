@@ -48,3 +48,24 @@ class _ContactState extends State<Contact> {
                               borderRadius: BorderRadius.circular(5),
                               color: CupertinoColors.white
                           ),
+ child: Text("P", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: CupertinoColors.black),)),
+                      Text(" Primary", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w200),),
+                      Icon(CupertinoIcons.chevron_forward, size: 12, color: CupertinoColors.white,)
+                    ],
+                  ),
+                  Text(name, style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                            decoration: BoxDecoration(
+                                color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
