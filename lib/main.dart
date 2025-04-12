@@ -115,3 +115,36 @@ class _HomepageState extends State<Homepage> {
                        ],
                      ),
                    ),
+   SizedBox(height: 20,),
+                   CupertinoTextField(
+                     prefix: Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen,),
+                     controller: _phone,
+                     placeholder: 'add phone',
+                     decoration: BoxDecoration(
+                       color: CupertinoColors.systemGrey.withOpacity(0.1),
+                     ),
+                   ),                   SizedBox(height: 20,),
+                   CupertinoTextField(
+                     prefix: Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen,),
+                     controller: _email,
+                     placeholder: 'add email',
+                     decoration: BoxDecoration(
+                       color: CupertinoColors.systemGrey.withOpacity(0.1),
+                     ),
+                   ),
+                   SizedBox(height: 20,),
+                   CupertinoTextField(
+                     prefix: Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen,),
+                     controller: _url,
+                     placeholder: 'add url',
+                     decoration: BoxDecoration(
+                       color: CupertinoColors.systemGrey.withOpacity(0.1),
+                     ),
+                   ),
+                   SizedBox(height: double.maxFinite,)
+                 ],
+               ),
+             );
+           });
+           }),
+         ),
