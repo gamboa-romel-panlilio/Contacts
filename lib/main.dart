@@ -16,3 +16,25 @@ void main() async{
     home: Homepage(),));
 
 }
+class Homepage extends StatefulWidget {
+  const Homepage({super.key});
+
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  var box = Hive.box('database');
+  List<dynamic> contacts = [
+  ];
+   @override
+  void initState() {
+     if (box.get('contacts') == null) {
+       print('empty list');
+     }else{
+       setState(() {
+         contacts = box.get('contacts');
+         print(contacts);
+       });
+     }
+    super.initState();
