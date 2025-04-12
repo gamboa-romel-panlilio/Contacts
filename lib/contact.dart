@@ -190,3 +190,54 @@ class _ContactState extends State<Contact> {
                   ),
                 ),
               ),
+ SizedBox(height: 10,),
+              GestureDetector(
+                onTap: () async{
+                  final Uri uri = await Uri.parse('sms: $phone');
+                  await launchUrl(uri);
+                },
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: CupertinoColors.systemGrey.withOpacity(0.2)
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('sms', style: TextStyle(fontSize: 13),),
+                      Text('$phone', style: TextStyle(color: CupertinoColors.systemBlue, fontSize: 14),)
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10,),
+              GestureDetector(
+                onTap: () async{
+                  final Uri uri = await Uri.parse('$url');
+                  await launchUrl(uri);
+                },
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: CupertinoColors.systemGrey.withOpacity(0.2)
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('url', style: TextStyle(fontSize: 13),),
+                      Text('$url', style: TextStyle(color: CupertinoColors.systemBlue, fontSize: 14),)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    )));
+  }
+}
