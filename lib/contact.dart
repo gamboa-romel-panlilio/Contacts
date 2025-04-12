@@ -69,3 +69,27 @@ class _ContactState extends State<Contact> {
                                 borderRadius: BorderRadius.circular(10)
                             ),
                             child: Column(
+   children: [
+                                CupertinoButton(child: Icon(CupertinoIcons.bubble_middle_bottom_fill, color: CupertinoColors.white,), onPressed: () async{
+                                  final Uri uri = await Uri.parse('sms: $phone');
+                                  await launchUrl(uri);
+                                }),
+                                Text('message', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),)
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                            decoration: BoxDecoration(
+                                color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                CupertinoButton(child: Icon(CupertinoIcons.phone_solid, color: CupertinoColors.white,), onPressed: ()async{
+                                  final Uri uri = await Uri.parse('tel: $phone');
+                                  await launchUrl(uri);
+                                }),
