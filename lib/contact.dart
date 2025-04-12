@@ -93,3 +93,53 @@ class _ContactState extends State<Contact> {
                                   final Uri uri = await Uri.parse('tel: $phone');
                                   await launchUrl(uri);
                                 }),
+   Text('call', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),)
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                            decoration: BoxDecoration(
+                                color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                CupertinoButton(child: Icon(CupertinoIcons.video_camera_solid, color: CupertinoColors.white,), onPressed: (){
+
+                                }),
+                                Text('video', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),)
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                            decoration: BoxDecoration(
+                                color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                CupertinoButton(child: Icon(CupertinoIcons.mail_solid, color: CupertinoColors.white,), onPressed: () async{
+                                  final Uri uri = await Uri.parse('mailto: $email');
+                                  await launchUrl(uri);
+                                }),
+                                Text('mail', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
