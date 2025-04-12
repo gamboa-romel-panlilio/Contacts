@@ -143,3 +143,50 @@ class _ContactState extends State<Contact> {
             )
           ],
         ),
+ Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () async{
+                  final Uri uri = await Uri.parse('tel: $phone');
+                  await launchUrl(uri);
+                },
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: CupertinoColors.systemGrey.withOpacity(0.2)
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('phone', style: TextStyle(fontSize: 13),),
+                      Text('$phone', style: TextStyle(color: CupertinoColors.systemBlue, fontSize: 14),)
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10,),
+              GestureDetector(
+                onTap: () async{
+                  final Uri uri = await Uri.parse('mailto: $email');
+                  await launchUrl(uri);
+                },
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: CupertinoColors.systemGrey.withOpacity(0.2)
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('email', style: TextStyle(fontSize: 13),),
+                      Text('$email', style: TextStyle(color: CupertinoColors.systemBlue, fontSize: 14),)
+                    ],
+                  ),
+                ),
+              ),
