@@ -186,3 +186,44 @@ class _HomepageState extends State<Homepage> {
                         child: Text('RG', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),),
                       ),
                       SizedBox(width: 10,),
+      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Romel Gamboa', style: TextStyle(fontWeight: FontWeight.bold),),
+                          Text('My Card', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),)
+                        ],
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Divider(color: CupertinoColors.systemGrey.withOpacity(0.3),),
+                  Expanded(child: ListView.builder(
+                    itemCount: contacts.length,
+                    itemBuilder: (context, int index) {
+                      return GestureDetector(
+                        onTap: (){
+                          setState(() {
+                            name = contacts[index]['name'];
+                            phone = contacts[index]['phone'];
+                            email = contacts[index]['email'];
+                            url = contacts[index]['url'];
+                            photo = contacts[index]['photo'];
+                          });
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> Contact()));
+                        },
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(contacts[index]['name'] == " "? contacts[index]['phone'] : contacts[index]['name']),
+                              Divider(color: CupertinoColors.systemGrey.withOpacity(0.3),),
+                            ],
+                          ),
+                        ),
+                      );
+                    })),
+                ],
+              ),
+        )));
+  }
+}
