@@ -204,3 +204,74 @@ class _EditContactState extends State<EditContact> {
       ),
     );
   }
+ Widget _cupertinoField(TextEditingController controller, String placeholder) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CupertinoTextField(
+        controller: controller,
+        placeholder: placeholder,
+        clearButtonMode: OverlayVisibilityMode.editing,
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: CupertinoColors.secondarySystemBackground,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  Widget _addButton(String label, VoidCallback onPressed) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CupertinoButton(
+        padding: EdgeInsets.all(15),
+        color: CupertinoColors.secondarySystemBackground,
+        borderRadius: BorderRadius.circular(8),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen),
+            SizedBox(width: 10),
+            Text(label, style: TextStyle(color: CupertinoColors.systemGreen)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneNumberField(int index, _PhoneEntry entry) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Row(
+              children: [
+                if (index > 0)
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => _removePhoneNumber(index),
+                    child: Icon(CupertinoIcons.minus_circled, color: CupertinoColors.systemRed),
+                  ),
+                SizedBox(width: 5),
+                Text('${entry.type} >', style: TextStyle(color: CupertinoColors.systemGrey)),
+              ],
+            ),
+            onPressed: () {},
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: CupertinoTextField(
+              controller: entry.numberController,
+              placeholder: '(0906) 849 5385',
+              keyboardType: TextInputType.phone,
+              clearButtonMode: OverlayVisibilityMode.editing,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: CupertinoColors.secondarySystemBackground,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
