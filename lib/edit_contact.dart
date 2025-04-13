@@ -102,3 +102,105 @@ class _EditContactState extends State<EditContact> {
       _emails.add(_EmailEntry(type: 'home', emailController: TextEditingController()));
     });
   }
+ void _removeEmail(int index) {
+    setState(() {
+      _emails.removeAt(index);
+    });
+  }
+
+  void _addURL() {
+    setState(() {
+      _urls.add(_URLEntry(type: 'home', urlController: TextEditingController()));
+    });
+  }
+
+  void _removeURL(int index) {
+    setState(() {
+      _urls.removeAt(index);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text('Edit Contact'),
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Text('Done', style: TextStyle(fontWeight: FontWeight.bold)),
+          onPressed: () {
+            List<String> phoneNumbers = _phoneNumbers.map((e) => e.numberController.text).toList();
+            List<String> emails = _emails.map((e) => e.emailController.text).toList();
+            List<String> urls = _urls.map((e) => e.urlController.text).toList();
+
+            Navigator.pop(context, {
+              'name': _firstNameController.text,
+              'phoneNumbers': phoneNumbers,
+              'emails': emails,
+              'urls': urls,
+            });
+          },
+        ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  // TODO: Change photo logic
+                  print('Change photo');
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundImage: NetworkImage(photo ?? ''), // Handle potential null
+                      backgroundColor: CupertinoColors.lightBackgroundGray,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          'Edit',
+                          style: TextStyle(color: CupertinoColors.white, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 30),
+              _cupertinoField(_firstNameController, 'First Name'), // Changed placeholder
+              SizedBox(height: 15),
+              _cupertinoField(_lastNameController, 'Last Name'), // Changed placeholder
+              SizedBox(height: 20),
+              ..._phoneNumbers.asMap().entries.map((entry) => _buildPhoneNumberField(entry.key, entry.value)).toList(),
+              _addButton('add phone', _addPhoneNumber),
+              SizedBox(height: 15),
+              ..._emails.asMap().entries.map((entry) => _buildEmailField(entry.key, entry.value)).toList(),
+              _addButton('add email', _addEmail),
+              SizedBox(height: 15),
+              ..._urls.asMap().entries.map((entry) => _buildURLField(entry.key, entry.value)).toList(),
+              _addButton('add URL', _addURL),
+              SizedBox(height: 30),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
