@@ -381,3 +381,72 @@ class _HomepageState extends State<Homepage> {
                           });
                           box.put('contacts', contacts);
                         },
+background: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          color: CupertinoColors.systemRed,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(CupertinoIcons.delete, color: CupertinoColors.white),
+                              SizedBox(width: 10),
+                              Text('Delete', style: TextStyle(color: CupertinoColors.white)),
+                            ],
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            _HomepageState.of(context)?.setState(() {
+                              name = contacts[index]['name'];
+                              phone = contacts[index]['phone'];
+                              email = contacts[index]['email'];
+                              url = contacts[index]['url'];
+                              photo = contacts[index]['photo'];
+                            });
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => Contact()));
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(contacts[index]['name'] == " "
+                                          ? contacts[index]['phone']
+                                          : contacts[index]['name']),
+                                      Divider(color: CupertinoColors.systemGrey.withOpacity(0.3)),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(CupertinoIcons.delete),
+                                  onPressed: () {
+                                    setState(() {
+                                      contacts.removeAt(index);
+                                    });
+                                    box.put('contacts', contacts);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static _HomepageState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_HomepageState>();
+}
