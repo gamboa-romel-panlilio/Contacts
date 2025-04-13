@@ -44,3 +44,57 @@ class _HomepageState extends State<Homepage> {
 
   TextEditingController _fname = TextEditingController();
   TextEditingController _lname = TextEditingController();
+ @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        trailing: CupertinoButton(
+            child: Icon(CupertinoIcons.add),
+            onPressed: () {
+              showCupertinoModalPopup(
+                  context: context,
+                  builder: (context) {
+                    return CupertinoPageScaffold(
+                      navigationBar: CupertinoNavigationBar(
+                        middle: Text('New Contact'),
+                        leading: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        trailing: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Text('Done'),
+                            onPressed: () {
+                              List<String> phoneNumbers = _phoneControllers
+                                  .map((controller) => controller.text)
+                                  .where((text) => text.isNotEmpty)
+                                  .toList();
+
+                              List<String> emails = _emailControllers
+                                  .map((controller) => controller.text)
+                                  .where((text) => text.isNotEmpty)
+                                  .toList();
+
+                              List<String> urls = _urlControllers
+                                  .map((controller) => controller.text)
+                                  .where((text) => text.isNotEmpty)
+                                  .toList();
+
+                              String contactName = "";
+                              if (_fname.text.isNotEmpty && _lname.text.isNotEmpty) {
+                                contactName = "${_fname.text} ${_lname.text}";
+                              } else if (_fname.text.isNotEmpty) {
+                                contactName = _fname.text;
+                              } else if (_lname.text.isNotEmpty) {
+                                contactName = _lname.text;
+                              } else if (phoneNumbers.isNotEmpty) {
+                                contactName = phoneNumbers.first;
+                              }
