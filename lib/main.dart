@@ -98,3 +98,56 @@ class _HomepageState extends State<Homepage> {
                               } else if (phoneNumbers.isNotEmpty) {
                                 contactName = phoneNumbers.first;
                               }
+      setState(() {
+                                contacts.add({
+                                  "name": contactName,
+                                  "phone": phoneNumbers.isNotEmpty ? phoneNumbers.join(', ') : "",
+                                  "email": emails.isNotEmpty ? emails.join(', ') : "",
+                                  "url": urls.isNotEmpty ? urls.join(', ') : "",
+                                  "photo": "https://th.bing.com/th/id/OIP.v9xx5HA2kWMXMDxIms_86wHaLI?rs=1&pid=ImgDetMain"
+                                });
+                                print('Contacts before saving: $contacts');
+                                box.put('contacts', contacts);
+                                print(box.get('contacts'));
+                              });
+
+                              _fname.clear();
+                              _lname.clear();
+                              _phoneControllers.clear();
+                              _emailControllers.clear();
+                              _urlControllers.clear();
+
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ),
+                      child: SafeArea(
+                        child: StatefulBuilder(
+                          builder: (BuildContext context, StateSetter modalSetState) {
+                            void _addPhoneFieldLocal() {
+                              modalSetState(() {
+                                _phoneControllers.add(TextEditingController());
+                              });
+                            }
+
+                            void _addEmailFieldLocal() {
+                              modalSetState(() {
+                                _emailControllers.add(TextEditingController());
+                              });
+                            }
+
+                            void _addUrlFieldLocal() {
+                              modalSetState(() {
+                                _urlControllers.add(TextEditingController());
+                              });
+                            }
+
+                            return SingleChildScrollView(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.person_circle_fill,
+                                    color: CupertinoColors.systemGrey,
+                                    size: 200,
