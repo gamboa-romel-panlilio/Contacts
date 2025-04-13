@@ -4,6 +4,7 @@ import 'variables.dart';
 import 'contact.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'edit_contact.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -44,7 +45,8 @@ class _HomepageState extends State<Homepage> {
 
   TextEditingController _fname = TextEditingController();
   TextEditingController _lname = TextEditingController();
- @override
+
+  @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -98,7 +100,7 @@ class _HomepageState extends State<Homepage> {
                               } else if (phoneNumbers.isNotEmpty) {
                                 contactName = phoneNumbers.first;
                               }
-      setState(() {
+                              setState(() {
                                 contacts.add({
                                   "name": contactName,
                                   "phone": phoneNumbers.isNotEmpty ? phoneNumbers.join(', ') : "",
@@ -151,7 +153,7 @@ class _HomepageState extends State<Homepage> {
                                     CupertinoIcons.person_circle_fill,
                                     color: CupertinoColors.systemGrey,
                                     size: 200,
-      ),
+                                  ),
                                   CupertinoButton(child: Text('Add Photo'), onPressed: () {}),
                                   Container(
                                     decoration: BoxDecoration(
@@ -292,7 +294,6 @@ class _HomepageState extends State<Homepage> {
                                         ],
                                       ),
                                     ),
-
                                     onPressed: _addUrlFieldLocal,
                                   ),
                                   SizedBox(height: double.maxFinite),
@@ -381,7 +382,7 @@ class _HomepageState extends State<Homepage> {
                           });
                           box.put('contacts', contacts);
                         },
-background: Container(
+                        background: Container(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           color: CupertinoColors.systemRed,
                           child: Row(
@@ -415,9 +416,13 @@ background: Container(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(contacts[index]['name'] == " "
-                                          ? contacts[index]['phone']
-                                          : contacts[index]['name']),
+                                      Text(
+                                        contacts[index]['name'].isEmpty
+                                            ? (contacts[index]['phone'].isNotEmpty
+                                            ? contacts[index]['phone']
+                                            : 'No name')
+                                            : contacts[index]['name'],
+                                      ),
                                       Divider(color: CupertinoColors.systemGrey.withOpacity(0.3)),
                                     ],
                                   ),
