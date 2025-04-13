@@ -275,3 +275,115 @@ class _EditContactState extends State<EditContact> {
               ),
             ),
           ),
+if (index == 0 && _phoneNumbers.length > 1)
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => _removePhoneNumber(index),
+              child: Icon(CupertinoIcons.minus_circled, color: CupertinoColors.systemRed),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailField(int index, _EmailEntry entry) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Row(
+              children: [
+                if (index > 0)
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => _removeEmail(index),
+                    child: Icon(CupertinoIcons.minus_circled, color: CupertinoColors.systemRed),
+                  ),
+                SizedBox(width: 5),
+                Text('${entry.type} >', style: TextStyle(color: CupertinoColors.systemGrey)),
+              ],
+            ),
+            onPressed: () {},
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: CupertinoTextField(
+              controller: entry.emailController,
+              placeholder: 'example@email.com',
+              keyboardType: TextInputType.emailAddress,
+              clearButtonMode: OverlayVisibilityMode.editing,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: CupertinoColors.secondarySystemBackground,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildURLField(int index, _URLEntry entry) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Row(
+              children: [
+                if (index > 0)
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => _removeURL(index),
+                    child: Icon(CupertinoIcons.minus_circled, color: CupertinoColors.systemRed),
+                  ),
+                SizedBox(width: 5),
+                Text('${entry.type} >', style: TextStyle(color: CupertinoColors.systemGrey)),
+              ],
+            ),
+            onPressed: () {},
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: CupertinoTextField(
+              controller: entry.urlController,
+              placeholder: 'https://example.com',
+              keyboardType: TextInputType.url,
+              clearButtonMode: OverlayVisibilityMode.editing,
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: CupertinoColors.secondarySystemBackground,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhoneEntry {
+  String type;
+  TextEditingController numberController;
+
+  _PhoneEntry({required this.type, required this.numberController});
+}
+
+class _EmailEntry {
+  String type;
+  TextEditingController emailController;
+
+  _EmailEntry({required this.type, required this.emailController});
+}
+
+class _URLEntry {
+  String type;
+  TextEditingController urlController;
+
+  _URLEntry({required this.type, required this.urlController});
+}
