@@ -53,6 +53,7 @@ class _HomepageState extends State<Homepage> {
   String? _selectedImageBase64;
   TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+  bool _showTeamDevelopers = false;
 
   @override
   void initState() {
@@ -77,7 +78,8 @@ class _HomepageState extends State<Homepage> {
       });
     }
   }
- void _filterContacts() {
+
+  void _filterContacts() {
     if (_searchController.text.isEmpty) {
       setState(() {
         filteredContacts = List.from(contacts);
@@ -245,7 +247,7 @@ class _HomepageState extends State<Homepage> {
                       });
                     }
                   }
-// Collect all email addresses with their labels
+                  // Collect all email addresses with their labels
                   List<Map<String, dynamic>> emailAddresses = [];
                   for (var field in _emailFields) {
                     if (field.controller.text.isNotEmpty) {
@@ -356,7 +358,7 @@ class _HomepageState extends State<Homepage> {
                           ],
                         ),
                       ),
-  SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // Phone Fields
                       Container(
@@ -765,6 +767,16 @@ class _HomepageState extends State<Homepage> {
           children: [
             CupertinoButton(
               padding: EdgeInsets.zero,
+              child: Icon(CupertinoIcons.gear),
+              onPressed: () {
+                setState(() {
+                  _showTeamDevelopers = !_showTeamDevelopers;
+                });
+              },
+            ),
+            SizedBox(width: 10),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
               child: Icon(CupertinoIcons.add),
               onPressed: () {
                 _openContactSheet();
@@ -828,6 +840,38 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               SizedBox(height: 20),
+
+              // Team Developers Section
+              if (_showTeamDevelopers) ...[
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.systemGrey.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Team Developers',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      _buildTeamMember('Arpon Jolas'),
+                      _buildTeamMember('Carreon Monica'),
+                      _buildTeamMember('Gamboa Romel'),
+                      _buildTeamMember('Gomez Dexter'),
+                      _buildTeamMember('Larin Kayle'),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+
               Row(
                 children: [
                   Container(
@@ -882,7 +926,7 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                         ),
-   direction: DismissDirection.endToStart, // Only allow right to left (iOS style)
+                        direction: DismissDirection.endToStart, // Only allow right to left (iOS style)
                         confirmDismiss: (direction) async {
                           // Show a confirmation dialog (iOS style)
                           return await showCupertinoDialog<bool>(
@@ -980,6 +1024,40 @@ class _HomepageState extends State<Homepage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTeamMember(String name) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemGrey.withOpacity(0.5),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                name.split(' ').map((n) => n[0]).join(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ],
       ),
     );
   }
