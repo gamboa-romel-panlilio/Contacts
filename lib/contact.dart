@@ -617,3 +617,73 @@ Widget _buildPhoneNumberItem(Map<String, dynamic> phoneData) {
       ),
     );
   }
+ Widget _buildEditableWebsite() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: CupertinoColors.systemGrey.withOpacity(0.1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('url', style: TextStyle(fontSize: 13, color: CupertinoColors.systemGrey)),
+          SizedBox(height: 4),
+          CupertinoTextField(
+            controller: _urlController,
+            placeholder: 'Website URL',
+            placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
+            keyboardType: TextInputType.url,
+            style: TextStyle(fontSize: 16),
+            decoration: null,
+            padding: EdgeInsets.zero,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebsiteItem() {
+    return GestureDetector(
+      onTap: () async {
+        final Uri uri = Uri.parse(url);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemGrey.withOpacity(0.1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('url', style: TextStyle(fontSize: 13, color: CupertinoColors.systemGrey)),
+            SizedBox(height: 4),
+            Text(
+              url,
+              style: TextStyle(fontSize: 16, color: CupertinoColors.systemBlue),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyPlaceholder(String text) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: CupertinoColors.systemGrey.withOpacity(0.1),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 16, color: CupertinoColors.systemGrey),
+      ),
+    );
+  }
+}
