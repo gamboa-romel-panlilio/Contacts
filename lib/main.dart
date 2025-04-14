@@ -882,3 +882,105 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                         ),
+   direction: DismissDirection.endToStart, // Only allow right to left (iOS style)
+                        confirmDismiss: (direction) async {
+                          // Show a confirmation dialog (iOS style)
+                          return await showCupertinoDialog<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CupertinoAlertDialog(
+                                title: Text('Delete Contact'),
+                                content: Text('Are you sure you want to delete this contact?'),
+                                actions: <Widget>[
+                                  CupertinoDialogAction(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                  ),
+                                  CupertinoDialogAction(
+                                    isDestructiveAction: true,
+                                    child: Text('Delete'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        onDismissed: (direction) {
+                          _deleteContact(index);
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              name = contacts[index]['name'];
+                              phone = contacts[index]['phone'];
+                              // Check if phoneNumbers exist and pass them too
+                              if (contacts[index]['phoneNumbers'] != null) {
+                                phoneNumbers = contacts[index]['phoneNumbers'];
+                              } else {
+                                // For backward compatibility with existing contacts
+                                phoneNumbers = [{'label': 'mobile', 'number': contacts[index]['phone']}];
+                              }
+                              url = contacts[index]['url'];
+                              email = contacts[index]['email'];
+                              photo = contacts[index]['photo'];
+                              // Pass the flag to indicate if it's a base64 image
+                              isBase64 = contacts[index]['isBase64'] ?? false;
+                            });
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => Contact()));
+                          },
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Show a small thumbnail of the contact photo
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10.0),
+                                      child: contacts[index]['isBase64'] == true
+                                          ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.memory(
+                                          base64Decode(contacts[index]['photo']),
+                                          width: 30,
+                                          height: 30,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                          : CircleAvatar(
+                                        radius: 15,
+                                        backgroundImage: NetworkImage(
+                                          contacts[index]['photo'],
+                                        ),
+                                      ),
+                                    ),
+                                    Text(contacts[index]['name'] == " "
+                                        ? contacts[index]['phone']
+                                        : contacts[index]['name']),
+                                  ],
+                                ),
+                                Divider(
+                                  color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
