@@ -91,3 +91,67 @@ class _ContactState extends State<Contact> {
       print('Error picking image: $e');
     }
   }
+  Widget _getImageWidget() {
+    if (_selectedImageBase64 != null && _selectedImageBase64!.isNotEmpty) {
+      try {
+        return Image.memory(
+          base64Decode(_selectedImageBase64!),
+          width: double.infinity,
+          fit: BoxFit.cover,
+          height: 300,
+        );
+      } catch (e) {
+        print('Error decoding image: $e');
+      }
+    } else if (isBase64) {
+      return Image.memory(
+        base64Decode(photo),
+        width: double.infinity,
+        fit: BoxFit.cover,
+        height: 300,
+      );
+    }
+
+    return Image.network(
+      photo,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      height: 300,
+      errorBuilder: (context, error, stackTrace) => Container(
+        height: 300,
+        color: CupertinoColors.systemGrey.withOpacity(0.2),
+        child: Icon(CupertinoIcons.person_crop_circle_fill, size: 100, color: CupertinoColors.systemGrey),
+      ),
+    );
+  }
+
+  void _saveChanges() {
+    name = _nameController.text;
+    email = _emailController.text;
+    url = _urlController.text;
+
+    if (_selectedImageBase64 != null) {
+      photo = _selectedImageBase64!;
+      isBase64 = true;
+    }
+
+    if (_phoneNumbersEditing.isNotEmpty) {
+      phoneNumbers = List<Map<String, dynamic>>.from(_phoneNumbersEditing);
+      phone = _phoneNumbersEditing[0]['number'] ?? '';
+    }
+
+    if (_contactIndex != null) {
+      List<dynamic> contacts = _myBox.get('contacts') ?? [];
+      contacts[_contactIndex!] = {
+        "name": name,
+        "company": contacts[_contactIndex!]['company'] ?? '',
+        "phone": phone,
+        "phoneNumbers": phoneNumbers,
+        "email": email,
+        "url": url,
+        "photo": photo,
+        "isBase64": isBase64,
+      };
+      _myBox.put('contacts', contacts);
+    }
+  }
