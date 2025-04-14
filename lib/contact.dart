@@ -37,3 +37,57 @@ class _ContactState extends State<Contact> {
     if (isBase64) {
       _selectedImageBase64 = photo;
     }
+ _findContactIndex();
+
+    if (phoneNumbers.isNotEmpty) {
+      _phoneNumbersEditing = List<Map<String, dynamic>>.from(phoneNumbers);
+    } else if (phone.isNotEmpty) {
+      _phoneNumbersEditing = [{'label': 'mobile', 'number': phone}];
+    }
+  }
+
+  void _findContactIndex() {
+    List<dynamic> contacts = _myBox.get('contacts') ?? [];
+    for (int i = 0; i < contacts.length; i++) {
+      if (contacts[i]['name'] == name && contacts[i]['email'] == email) {
+        _contactIndex = i;
+        break;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _urlController.dispose();
+    super.dispose();
+  }
+
+  void _toggleEditMode() {
+    setState(() {
+      _isEditing = !_isEditing;
+      if (!_isEditing) {
+        _saveChanges();
+      }
+    });
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 75,
+      );
+
+      if (image != null) {
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _selectedImageBase64 = base64Encode(bytes);
+          isBase64 = true;
+        });
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
