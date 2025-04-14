@@ -245,3 +245,114 @@ class _HomepageState extends State<Homepage> {
                       });
                     }
                   }
+// Collect all email addresses with their labels
+                  List<Map<String, dynamic>> emailAddresses = [];
+                  for (var field in _emailFields) {
+                    if (field.controller.text.isNotEmpty) {
+                      emailAddresses.add({
+                        'label': field.label,
+                        'email': field.controller.text
+                      });
+                    }
+                  }
+
+                  Map<String, dynamic> contactData = {
+                    "name": _fname.text + " " + _lname.text,
+                    "company": _company.text,
+                    "phone": phoneNumbers.isNotEmpty ? phoneNumbers[0]['number'] : "", // Use first phone for main display
+                    "phoneNumbers": phoneNumbers, // Store all phone numbers with labels
+                    "email": emailAddresses.isNotEmpty ? emailAddresses[0]['email'] : "", // Use first email for main display
+                    "emailAddresses": emailAddresses, // Store all email addresses with labels
+                    "url": _url.text,
+                    // Use the selected image base64 or default to the URL as before
+                    "photo": _selectedImageBase64 ??
+                        "https://scontent.fmnl4-7.fna.fbcdn.net/v/t39.30808-6/448864401_25832653359683493_4327571974695608243_n.jpg?stp=c90.0.540.540a_dst-jpg_s206x206_tt6&_nc_cat=108&ccb=1-7&_nc_sid=969c58&_nc_eui2=AeEvNdhfEK8xO_H_iL3CI6aZ7XkIepo05m7teQh6mjTmbvTE7pvEcx-tcTmY1VTPzJp21SnDqKevyEdEiIdMDnIN&_nc_ohc=RuDXGd1z7EEQ7kNvwG9EGq3&_nc_oc=AdmTjCm9WrP209Irgz-mpUKWfGUztooQ8i4UWv5Lj8tTOw1Au9TbISLr2WlxZyblQm8_nRkOpboOr6uPbgrVL4Wc&_nc_zt=23&_nc_ht=scontent.fmnl4-7.fna&_nc_gid=K7nKnDvI8WWnT-FvkPq-4Q&oh=00_AfHndFz4zvaDwYUoFUdVnXkqRlKRnBXWoeZm66COvv68cg&oe=68028F76",
+                    // Add a flag to indicate if it's a base64 image or URL
+                    "isBase64": _selectedImageBase64 != null,
+                  };
+                  setState(() {
+                    if (contactToEdit != null && editIndex != null) {
+                      // Update existing contact
+                      contacts[editIndex] = contactData;
+                      // Also update in filtered list if present
+                      int filteredIndex = filteredContacts.indexOf(contactToEdit);
+                      if (filteredIndex != -1) {
+                        filteredContacts[filteredIndex] = contactData;
+                      }
+                    } else {
+                      // Add new contact
+                      contacts.add(contactData);
+                      filteredContacts = List.from(contacts); // Refresh filtered list
+                    }
+                    _myBox.put('contacts', contacts);
+                    print(_myBox.get('contacts'));
+                  });
+
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+          message: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Show either selected image or default icon
+                      _selectedImageBase64 != null
+                          ? _getImageWidget(_selectedImageBase64)
+                          : Icon(
+                        CupertinoIcons.person_circle_fill,
+                        color: CupertinoColors.systemGrey,
+                        size: 200,
+                      ),
+                      CupertinoButton(
+                        child: Text('Add Photo', style: TextStyle(color: CupertinoColors.activeBlue)),
+                        onPressed: () async {
+                          await _pickImage();
+                          // Update the modal UI
+                          setModalState(() {});
+                        },
+                      ),
+
+                      // First name, Last name, Company
+                      Container(
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          children: [
+                            CupertinoTextField(
+                              controller: _fname,
+                              placeholder: 'First name',
+                              decoration: BoxDecoration(
+                                  color: CupertinoColors.systemBackground.withOpacity(0)),
+                              padding: EdgeInsets.all(12),
+                            ),
+                            Divider(
+                              color: CupertinoColors.systemGrey.withOpacity(0.3),
+                              height: 1,
+                            ),
+                            CupertinoTextField(
+                              controller: _lname,
+                              placeholder: 'Last name',
+                              decoration: BoxDecoration(
+                                  color: CupertinoColors.systemBackground.withOpacity(0)),
+                              padding: EdgeInsets.all(12),
+                            ),
+                            Divider(
+                              color: CupertinoColors.systemGrey.withOpacity(0.3),
+                              height: 1,
+                            ),
+                            CupertinoTextField(
+                              controller: _company,
+                              placeholder: 'Company',
+                              decoration: BoxDecoration(
+                                  color: CupertinoColors.systemBackground.withOpacity(0)),
+                              padding: EdgeInsets.all(12),
+                            ),
+                          ],
+                        ),
+                      ),
