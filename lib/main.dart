@@ -356,3 +356,529 @@ class _HomepageState extends State<Homepage> {
                           ],
                         ),
                       ),
+  SizedBox(height: 20),
+
+                      // Phone Fields
+                      Container(
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Column(
+                          children: [
+                            // Existing phone fields
+                            ..._phoneFields.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              PhoneField field = entry.value;
+
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Delete button (red circle with minus)
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (_phoneFields.length > 1) {
+                                            setModalState(() {
+                                              _phoneFields.removeAt(index);
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 12),
+                                          width: 26,
+                                          height: 26,
+                                          decoration: BoxDecoration(
+                                            color: CupertinoColors.destructiveRed,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            CupertinoIcons.minus,
+                                            color: CupertinoColors.white,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Label selection
+                                      GestureDetector(
+                                        onTap: () {
+                                          // Show a modal for label selection
+                                          showCupertinoModalPopup(
+                                            context: context,
+                                            builder: (context) => Container(
+                                              height: 250,
+                                              color: CupertinoColors.black,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      CupertinoButton(
+                                                        child: Text('Cancel'),
+                                                        onPressed: () => Navigator.pop(context),
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: Text('Done'),
+                                                        onPressed: () => Navigator.pop(context),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoPicker(
+                                                      itemExtent: 32,
+                                                      onSelectedItemChanged: (int value) {
+                                                        setModalState(() {
+                                                          field.label = _phoneLabels[value];
+                                                        });
+                                                      },
+                                                      children: _phoneLabels.map((label) =>
+                                                          Text(label)
+                                                      ).toList(),
+                                                      scrollController: FixedExtentScrollController(
+                                                        initialItem: _phoneLabels.indexOf(field.label),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: 80,
+                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                          child: Text(
+                                            field.label,
+                                            style: TextStyle(
+                                              color: CupertinoColors.activeBlue,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Phone input field
+                                      Expanded(
+                                        child: CupertinoTextField(
+                                          controller: field.controller,
+                                          placeholder: 'Phone',
+                                          keyboardType: TextInputType.phone,
+                                          decoration: BoxDecoration(
+                                            color: Colors.transparent,
+                                          ),
+                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Add divider except for the last item
+                                  if (index < _phoneFields.length - 1)
+                                    Divider(
+                                      color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                      height: 1,
+                                      indent: 46, // Indent to align with the text fields
+                                    ),
+                                ],
+                              );
+                            }).toList(),
+
+                            // Add phone button
+                            GestureDetector(
+                              onTap: () {
+                                setModalState(() {
+                                  _phoneFields.add(PhoneField());
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(left: 12),
+                                    width: 26,
+                                    height: 26,
+                                    decoration: BoxDecoration(
+                                      color: CupertinoColors.activeGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      CupertinoIcons.plus,
+                                      color: CupertinoColors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Text(
+                                      'add phone',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Column(
+                          children: [
+                            // Existing email fields
+                            ..._emailFields.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              EmailField field = entry.value;
+
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Delete button (red circle with minus)
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (_emailFields.length > 1) {
+                                            setModalState(() {
+                                              _emailFields.removeAt(index);
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 12),
+                                          width: 26,
+                                          height: 26,
+                                          decoration: BoxDecoration(
+                                            color: CupertinoColors.destructiveRed,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            CupertinoIcons.minus,
+                                            color: CupertinoColors.white,
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
+
+                                      GestureDetector(
+                                        onTap: () {
+                                          // Show a modal for label selection
+                                          showCupertinoModalPopup(
+                                            context: context,
+                                            builder: (context) => Container(
+                                              height: 250,
+                                              color: CupertinoColors.black,
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      CupertinoButton(
+                                                        child: Text('Cancel'),
+                                                        onPressed: () => Navigator.pop(context),
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: Text('Done'),
+                                                        onPressed: () => Navigator.pop(context),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoPicker(
+                                                      itemExtent: 32,
+                                                      onSelectedItemChanged: (int value) {
+                                                        setModalState(() {
+                                                          field.label = _emailLabels[value];
+                                                        });
+                                                      },
+                                                      children: _emailLabels.map((label) =>
+                                                          Text(label)
+                                                      ).toList(),
+                                                      scrollController: FixedExtentScrollController(
+                                                        initialItem: _emailLabels.indexOf(field.label),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+
+                                        child: Container(
+                                          width: 80,
+                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                          child: Text(
+                                            field.label,
+                                            style: TextStyle(
+                                              color: CupertinoColors.activeBlue,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Email input field
+                                      Expanded(
+                                        child: CupertinoTextField(
+                                          controller: field.controller,
+                                          placeholder: 'Email',
+                                          keyboardType: TextInputType.emailAddress,
+                                          decoration: BoxDecoration(
+                                            color: Colors.transparent,
+                                          ),
+                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // Add divider except for the last item
+                                  if (index < _emailFields.length - 1)
+                                    Divider(
+                                      color: CupertinoColors.systemGrey.withOpacity(0.3),
+                                      height: 1,
+                                      indent: 46, // Indent to align with the text fields
+                                    ),
+                                ],
+                              );
+                            }).toList(),
+
+
+                            GestureDetector(
+                              onTap: () {
+                                setModalState(() {
+                                  _emailFields.add(EmailField());
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(left: 12),
+                                    width: 26,
+                                    height: 26,
+                                    decoration: BoxDecoration(
+                                      color: CupertinoColors.activeGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      CupertinoIcons.plus,
+                                      color: CupertinoColors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Text(
+                                      'add email',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // URL Field
+                      Container(
+                        decoration: BoxDecoration(
+                          color: CupertinoColors.systemGrey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                  child: Text(
+                                    'URL',
+                                    style: TextStyle(
+                                      color: CupertinoColors.activeBlue,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: CupertinoTextField(
+                                    controller: _url,
+                                    placeholder: 'Website',
+                                    keyboardType: TextInputType.url,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Spacer
+                      SizedBox(height: 100),
+                    ],
+                  ),
+                );
+              }
+          ),
+        );
+      },
+    );
+  }
+
+
+  @override
+  void dispose() {
+    _fname.dispose();
+    _lname.dispose();
+    _company.dispose();
+    _url.dispose();
+    _searchController.dispose();
+    for (var field in _phoneFields) {
+      field.controller.dispose();
+    }
+    for (var field in _emailFields) {
+      field.controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: _isSearching ? null : Text('Contacts'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Icon(CupertinoIcons.add),
+              onPressed: () {
+                _openContactSheet();
+              },
+            ),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Contacts',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15),
+              CupertinoTextField(
+                controller: _searchController,
+                placeholder: 'Search',
+                decoration: BoxDecoration(
+                    color: CupertinoColors.systemGrey.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20)),
+                prefix: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    CupertinoIcons.search,
+                    color: CupertinoColors.systemGrey,
+                    size: 20,
+                  ),
+                ),
+                suffix: _searchController.text.isNotEmpty
+                    ? GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _searchController.clear();
+                      _filterContacts();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      CupertinoIcons.clear_circled_solid,
+                      color: CupertinoColors.systemGrey,
+                      size: 20,
+                    ),
+                  ),
+                )
+                    : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    CupertinoIcons.mic_fill,
+                    color: CupertinoColors.systemGrey,
+                    size: 20,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(12, 9, 12, 9),
+                    decoration: BoxDecoration(
+                        color: CupertinoColors.systemGrey,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Text(
+                      'RG',
+                      style:
+                      TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Romel Gamboa',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'My card',
+                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                      )
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(height: 20),
+              Divider(
+                color: CupertinoColors.systemGrey.withOpacity(0.3),
+              ),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: contacts.length,
+                    itemBuilder: (context, int index) {
+                      // Using CupertinoSwipeAction for iOS-style swipe delete
+                      return Dismissible(
+                        key: UniqueKey(),
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          color: CupertinoColors.destructiveRed,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: CupertinoColors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
