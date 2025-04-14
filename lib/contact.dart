@@ -529,3 +529,91 @@ class _ContactState extends State<Contact> {
       },
     );
   }
+Widget _buildPhoneNumberItem(Map<String, dynamic> phoneData) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GestureDetector(
+        onTap: () async {
+          final Uri uri = Uri.parse('tel:${phoneData['number']}');
+          await launchUrl(uri);
+        },
+        child: Container(
+          padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: CupertinoColors.systemGrey.withOpacity(0.1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                phoneData['label'] ?? 'phone',
+                style: TextStyle(fontSize: 13, color: CupertinoColors.systemGrey),
+              ),
+              SizedBox(height: 4),
+              Text(
+                phoneData['number'] ?? '',
+                style: TextStyle(fontSize: 16, color: CupertinoColors.systemBlue),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEditableEmail() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: CupertinoColors.systemGrey.withOpacity(0.1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('email', style: TextStyle(fontSize: 13, color: CupertinoColors.systemGrey)),
+          SizedBox(height: 4),
+          CupertinoTextField(
+            controller: _emailController,
+            placeholder: 'Email address',
+            placeholderStyle: TextStyle(color: CupertinoColors.systemGrey.withOpacity(0.5)),
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(fontSize: 16),
+            decoration: null,
+            padding: EdgeInsets.zero,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailItem() {
+    return GestureDetector(
+      onTap: () async {
+        final Uri uri = Uri.parse('mailto:$email');
+        await launchUrl(uri);
+      },
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: CupertinoColors.systemGrey.withOpacity(0.1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('email', style: TextStyle(fontSize: 13, color: CupertinoColors.systemGrey)),
+            SizedBox(height: 4),
+            Text(
+              email,
+              style: TextStyle(fontSize: 16, color: CupertinoColors.systemBlue),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
