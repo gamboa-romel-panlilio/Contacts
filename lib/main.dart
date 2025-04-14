@@ -4,11 +4,15 @@ import 'variables.dart';
 import 'contact.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'edit_contact.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  var box = await Hive.openBox('database');
+  await Hive.openBox('database'); // Ensure the box is opened in main
   runApp(CupertinoApp(
     theme: CupertinoThemeData(brightness: Brightness.dark),
     debugShowCheckedModeBanner: false,
@@ -23,435 +27,53 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
+class PhoneField {
+  TextEditingController controller = TextEditingController();
+  String label = 'mobile'; // Default label
+
+  PhoneField({String initialLabel = 'mobile'}) {
+    this.label = initialLabel;
+  }
+}
+
+class EmailField {
+  TextEditingController controller = TextEditingController();
+  String label = 'home'; // Default label
+
+  EmailField({String initialLabel = 'home'}) {
+    this.label = initialLabel;
+  }
+}
+
 class _HomepageState extends State<Homepage> {
-  var box = Hive.box('database');
+  late Box<dynamic> _myBox; // Declare a late variable for the box
   List<dynamic> contacts = [];
-  List<TextEditingController> _phoneControllers = [];
-  List<TextEditingController> _emailControllers = [];
-  List<TextEditingController> _urlControllers = [];
+  List<dynamic> filteredContacts = [];
+  final ImagePicker _picker = ImagePicker();
+  String? _selectedImageBase64;
+  TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
-    if (box.get('contacts') == null) {
+    _openBoxAndLoadData(); // Call a function to handle box opening and data loading
+    _searchController.addListener(_filterContacts);
+  }
+
+  Future<void> _openBoxAndLoadData() async {
+    _myBox = Hive.box('database'); // Get the already opened box
+    _loadContacts();
+  }
+
+  void _loadContacts() {
+    if (_myBox.get('contacts') == null) {
       print('empty list');
     } else {
       setState(() {
-        contacts = box.get('contacts');
+        contacts = _myBox.get('contacts');
+        filteredContacts = List.from(contacts);
         print(contacts);
       });
     }
   }
-
-  TextEditingController _fname = TextEditingController();
-  TextEditingController _lname = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        trailing: CupertinoButton(
-            child: Icon(CupertinoIcons.add),
-            onPressed: () {
-              showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) {
-                    return CupertinoPageScaffold(
-                      navigationBar: CupertinoNavigationBar(
-                        middle: Text('New Contact'),
-                        leading: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            child: Text('Cancel'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        trailing: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            child: Text('Done'),
-                            onPressed: () {
-                              List<String> phoneNumbers = _phoneControllers
-                                  .map((controller) => controller.text)
-                                  .where((text) => text.isNotEmpty)
-                                  .toList();
-
-                              List<String> emails = _emailControllers
-                                  .map((controller) => controller.text)
-                                  .where((text) => text.isNotEmpty)
-                                  .toList();
-
-                              List<String> urls = _urlControllers
-                                  .map((controller) => controller.text)
-                                  .where((text) => text.isNotEmpty)
-                                  .toList();
-
-                              String contactName = "";
-                              if (_fname.text.isNotEmpty && _lname.text.isNotEmpty) {
-                                contactName = "${_fname.text} ${_lname.text}";
-                              } else if (_fname.text.isNotEmpty) {
-                                contactName = _fname.text;
-                              } else if (_lname.text.isNotEmpty) {
-                                contactName = _lname.text;
-                              } else if (phoneNumbers.isNotEmpty) {
-                                contactName = phoneNumbers.first;
-                              }
-                              setState(() {
-                                contacts.add({
-                                  "name": contactName,
-                                  "phone": phoneNumbers.isNotEmpty ? phoneNumbers.join(', ') : "",
-                                  "email": emails.isNotEmpty ? emails.join(', ') : "",
-                                  "url": urls.isNotEmpty ? urls.join(', ') : "",
-                                  "photo": "https://th.bing.com/th/id/OIP.v9xx5HA2kWMXMDxIms_86wHaLI?rs=1&pid=ImgDetMain"
-                                });
-                                print('Contacts before saving: $contacts');
-                                box.put('contacts', contacts);
-                                print(box.get('contacts'));
-                              });
-
-                              _fname.clear();
-                              _lname.clear();
-                              _phoneControllers.clear();
-                              _emailControllers.clear();
-                              _urlControllers.clear();
-
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                      ),
-                      child: SafeArea(
-                        child: StatefulBuilder(
-                          builder: (BuildContext context, StateSetter modalSetState) {
-                            void _addPhoneFieldLocal() {
-                              modalSetState(() {
-                                _phoneControllers.add(TextEditingController());
-                              });
-                            }
-
-                            void _addEmailFieldLocal() {
-                              modalSetState(() {
-                                _emailControllers.add(TextEditingController());
-                              });
-                            }
-
-                            void _addUrlFieldLocal() {
-                              modalSetState(() {
-                                _urlControllers.add(TextEditingController());
-                              });
-                            }
-
-                            return SingleChildScrollView(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.person_circle_fill,
-                                    color: CupertinoColors.systemGrey,
-                                    size: 200,
-                                  ),
-                                  CupertinoButton(child: Text('Add Photo'), onPressed: () {}),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        CupertinoTextField(
-                                          controller: _fname,
-                                          placeholder: 'First Name',
-                                          decoration: BoxDecoration(
-                                            color: CupertinoColors.systemGrey.withOpacity(0.0),
-                                          ),
-                                        ),
-                                        Divider(color: CupertinoColors.systemGrey.withOpacity(0.2)),
-                                        CupertinoTextField(
-                                          controller: _lname,
-                                          placeholder: 'Last Name',
-                                          decoration: BoxDecoration(
-                                            color: CupertinoColors.systemGrey.withOpacity(0.0),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Column(
-                                    children: _phoneControllers.map((controller) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 10.0),
-                                        child: CupertinoTextField(
-                                          prefix: Icon(
-                                            CupertinoIcons.phone_fill,
-                                            color: CupertinoColors.systemGreen,
-                                          ),
-                                          controller: controller,
-                                          placeholder: 'Phone Number',
-                                          keyboardType: TextInputType.phone,
-                                          decoration: BoxDecoration(
-                                            color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen),
-                                          SizedBox(width: 5),
-                                          Text('Add Phone', style: TextStyle(fontSize: 16)),
-                                        ],
-                                      ),
-                                    ),
-                                    onPressed: _addPhoneFieldLocal,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Column(
-                                    children: _emailControllers.map((controller) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 10.0),
-                                        child: CupertinoTextField(
-                                          prefix: Icon(
-                                            CupertinoIcons.mail_solid,
-                                            color: CupertinoColors.systemGreen,
-                                          ),
-                                          controller: controller,
-                                          placeholder: 'Email Address',
-                                          keyboardType: TextInputType.emailAddress,
-                                          decoration: BoxDecoration(
-                                            color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen),
-                                          SizedBox(width: 5),
-                                          Text('Add Email', style: TextStyle(fontSize: 16)),
-                                        ],
-                                      ),
-                                    ),
-                                    onPressed: _addEmailFieldLocal,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Column(
-                                    children: _urlControllers.map((controller) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 10.0),
-                                        child: CupertinoTextField(
-                                          prefix: Icon(
-                                            CupertinoIcons.link,
-                                            color: CupertinoColors.systemGreen,
-                                          ),
-                                          controller: controller,
-                                          placeholder: 'URL',
-                                          keyboardType: TextInputType.url,
-                                          decoration: BoxDecoration(
-                                            color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: CupertinoColors.systemGrey.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemGreen),
-                                          SizedBox(width: 5),
-                                          Text('Add URL', style: TextStyle(fontSize: 16)),
-                                        ],
-                                      ),
-                                    ),
-                                    onPressed: _addUrlFieldLocal,
-                                  ),
-                                  SizedBox(height: double.maxFinite),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  });
-            }),
-      ),
-      child: SafeArea(
-        child: SizedBox.expand(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Contacts',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                CupertinoTextField(
-                  placeholder: 'Search',
-                  decoration: BoxDecoration(
-                      color: CupertinoColors.systemGrey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20)),
-                  prefix: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(CupertinoIcons.search, color: CupertinoColors.systemGrey, size: 20),
-                  ),
-                  suffix: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(CupertinoIcons.mic_fill, color: CupertinoColors.systemGrey, size: 20),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(12, 9, 12, 9),
-                      decoration: BoxDecoration(
-                          color: CupertinoColors.systemGrey,
-                          borderRadius: BorderRadius.circular(50)),
-                      child: Text(
-                        'RG',
-                        style:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Romel Gamboa',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'My Card',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 12),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                SizedBox(height: 10),
-                Divider(color: CupertinoColors.systemGrey.withOpacity(0.3)),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: contacts.length,
-                    itemBuilder: (context, int index) {
-                      return Dismissible(
-                        key: Key(contacts[index]['name']),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          setState(() {
-                            contacts.removeAt(index);
-                          });
-                          box.put('contacts', contacts);
-                        },
-                        background: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          color: CupertinoColors.systemRed,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Icon(CupertinoIcons.delete, color: CupertinoColors.white),
-                              SizedBox(width: 10),
-                              Text('Delete', style: TextStyle(color: CupertinoColors.white)),
-                            ],
-                          ),
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            _HomepageState.of(context)?.setState(() {
-                              name = contacts[index]['name'];
-                              phone = contacts[index]['phone'];
-                              email = contacts[index]['email'];
-                              url = contacts[index]['url'];
-                              photo = contacts[index]['photo'];
-                            });
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => Contact()));
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        contacts[index]['name'].isEmpty
-                                            ? (contacts[index]['phone'].isNotEmpty
-                                            ? contacts[index]['phone']
-                                            : 'No name')
-                                            : contacts[index]['name'],
-                                      ),
-                                      Divider(color: CupertinoColors.systemGrey.withOpacity(0.3)),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(CupertinoIcons.delete),
-                                  onPressed: () {
-                                    setState(() {
-                                      contacts.removeAt(index);
-                                    });
-                                    box.put('contacts', contacts);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  static _HomepageState? of(BuildContext context) =>
-      context.findAncestorStateOfType<_HomepageState>();
-}
